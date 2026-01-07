@@ -40,6 +40,15 @@ export class RoleRepository implements IRoleRepository {
     return RoleMapper.toDomain(orm);
   }
 
+  async findPublicAssignableRoles() {
+    const rows = await this.roleRepo.find({
+      order: { name: 'ASC' },
+    });
+
+    const blocked = new Set(['admin', 'super_admin']);
+    return rows.filter((r) => !blocked.has(r.name));
+  }
+
   async assignPermission(roleId: string, permissionId: string): Promise<void> {
     const exists = await this.rolePermRepo.findOne({
       where: { role_id: roleId, permission_id: permissionId },

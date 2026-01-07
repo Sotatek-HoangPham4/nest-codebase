@@ -1,5 +1,13 @@
 import type { Request, Response } from 'express';
-import { Controller, Post, Body, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Res,
+  Get,
+  UseGuards,
+} from '@nestjs/common';
 import { RegisterDto } from '../../application/dtos/register.dto';
 import { LoginDto } from '../../application/dtos/login.dto';
 import { clearAuthCookies, setAuthCookies } from '@/shared/utils/cookies';
@@ -10,12 +18,27 @@ import { LogoutUseCase } from '../../application/use-cases/logout.use-case';
 import { RefreshUseCase } from '../../application/use-cases/refresh.use-case';
 import { EnableMfaUseCase } from '../../application/use-cases/enable-mfa.use-case';
 import { VerifyOtpUseCase } from '../../application/use-cases/verify-otp.use-case';
+import { GetMeUseCase } from '../../application/use-cases/get-me.use-case';
+import { AuthGuard } from '../../guards/auth.guard';
+import { UserMapper } from '@/modules/user/infrastructure/mappers/user.mapper';
+import { UserResponseDto } from '@/modules/user/presentation/dtos/user-response.dto';
+
+export interface AuthenticatedUser {
+  id: string;
+  username: string;
+  role: string;
+}
+
+export interface AuthenticatedRequest extends Request {
+  user: AuthenticatedUser;
+}
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly registerUseCase: RegisterUseCase,
     private readonly loginUseCase: LoginUseCase,
+    private readonly getMeUseCase: GetMeUseCase,
     private readonly logoutUseCase: LogoutUseCase,
     private readonly refreshUseCase: RefreshUseCase,
     private readonly enableMfaUseCase: EnableMfaUseCase,
@@ -48,6 +71,19 @@ export class AuthController {
         accessToken: accessToken,
         refreshToken: refreshToken,
       },
+    };
+  }
+
+  @Get('me')
+  // @UseGuards(AuthGuard)
+  async me(@Req() req: AuthenticatedRequest) {
+    const userId = '0b15a950-2929-4f84-b68a-90f33e78a4e8';
+
+    const user = await this.getMeUseCase.execute(userId);
+
+    return {
+      message: 'Get current user successfully',
+      data: UserResponseDto.toResponse(user),
     };
   }
 

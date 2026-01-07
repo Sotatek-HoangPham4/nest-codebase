@@ -17,6 +17,7 @@ import {
 } from '../permission/domain/repositories/permission.repository.interface';
 import { PermissionRepository } from '../permission/infrastructure/persistence/repositories/permission.repository';
 import { PermissionOrmEntity } from '../permission/infrastructure/persistence/orm/permission.orm-entity';
+import { GetPublicRolesUseCase } from './application/use-cases/get-public-roles.use-case';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { PermissionOrmEntity } from '../permission/infrastructure/persistence/or
     AssignPermissionUseCase,
     GetUserRolesUseCase,
     GetUserPermissionsUseCase,
+    GetPublicRolesUseCase,
   ],
   exports: [IRoleRepositoryToken],
 })

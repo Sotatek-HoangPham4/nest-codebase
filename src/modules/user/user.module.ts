@@ -16,6 +16,8 @@ import { UpdateSettingsUseCase } from './application/use-cases/update-settings.u
 import { AuditLogsController } from './presentation/controllers/audit-logs.controller';
 import { AuditLogsRepository } from './infrastructure/repositories/audit-logs.repository';
 import { CreateUserUseCase } from './application/use-cases/create-user.use-case';
+import { FindUserByEmailUseCase } from './application/use-cases/find-user-by-email.use-case';
+import { SearchUsersUseCase } from './application/use-cases/search-users.use-case';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserOrmEntity, AuditLogOrmEntity])],
@@ -38,6 +40,8 @@ import { CreateUserUseCase } from './application/use-cases/create-user.use-case'
     LockAccountUseCase,
     UnlockAccountUseCase,
     GetAuditLogsUseCase,
+    FindUserByEmailUseCase,
+    SearchUsersUseCase,
   ],
   exports: ['IUserRepository', 'IAuditLogsRepository'],
 })

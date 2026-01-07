@@ -152,6 +152,15 @@ export class User {
     });
   }
 
+  toPrimitives() {
+    return {
+      id: this.id,
+      email: this.email.getValue(),
+      username: this.username,
+      avatar_url: this.avatar_url ?? null,
+    };
+  }
+
   getProps() {
     return this.props;
   }

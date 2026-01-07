@@ -23,11 +23,13 @@ import { PermissionGuard } from '@/modules/auth/guards/permission.guard';
 import { Permissions } from '@/modules/auth/decorators/permissions.decorator';
 import { RoleGuard } from '@/modules/auth/guards/role.guard';
 import { Roles } from '@/modules/auth/decorators/roles.decorator';
+import { GetPublicRolesUseCase } from '../../application/use-cases/get-public-roles.use-case';
 
 @Controller('roles')
 export class RoleController {
   constructor(
     private readonly createRoleUC: CreateRoleUseCase,
+    private readonly getPublicRolesUC: GetPublicRolesUseCase,
     private readonly assignRoleUC: AssignRoleUseCase,
     private readonly assignPermUC: AssignPermissionUseCase,
     private readonly getUserRolesUC: GetUserRolesUseCase,
@@ -40,6 +42,17 @@ export class RoleController {
     return {
       message: 'Create new role successfully.',
       data: RoleResponseDto.fromPrimitives(res),
+    };
+  }
+
+  @Get('public')
+  async getPublicRoles() {
+    const roles = await this.getPublicRolesUC.execute();
+    return {
+      message: 'Get public roles successfully.',
+      data: {
+        roles: roles.map(RoleResponseDto.fromPrimitives), // nếu roles đã là primitives
+      },
     };
   }
 

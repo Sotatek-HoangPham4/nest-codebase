@@ -7,6 +7,7 @@ export interface IRoleRepository {
   save(role: RoleEntity): Promise<void>;
   findById(id: string): Promise<RoleEntity | null>;
   findByName(name: string): Promise<RoleEntity | null>;
+  findPublicAssignableRoles(): Promise<any[]>;
 
   assignPermission(roleId: string, permissionId: string): Promise<void>;
   removePermission(roleId: string, permissionId: string): Promise<void>;

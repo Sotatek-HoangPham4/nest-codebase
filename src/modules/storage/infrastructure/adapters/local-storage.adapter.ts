@@ -1,32 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import * as fs from 'fs';
+import * as fs from 'fs/promises';
 import * as path from 'path';
-import { IStorageService } from '../../domain/services/storage.service.interface';
+import { StorageServiceInterface } from '../../domain/services/storage.service.interface';
 
 @Injectable()
-export class LocalStorageAdapter implements IStorageService {
-  private readonly uploadDir = path.join(process.cwd(), 'uploads');
+export class LocalStorageAdapter implements StorageServiceInterface {
+  private root = path.join(process.cwd(), 'storage'); // ./storage
 
-  constructor() {
-    if (!fs.existsSync(this.uploadDir)) {
-      fs.mkdirSync(this.uploadDir);
+  private abs(p: string) {
+    return path.join(this.root, p);
+  }
+
+  async write(p: string, buffer: Buffer) {
+    const full = this.abs(p);
+    await fs.mkdir(path.dirname(full), { recursive: true });
+    await fs.writeFile(full, buffer);
+  }
+
+  async read(p: string) {
+    return fs.readFile(this.abs(p));
+  }
+
+  async exists(p: string) {
+    try {
+      await fs.stat(this.abs(p));
+      return true;
+    } catch {
+      return false;
     }
   }
 
-  async upload(
-    fileBuffer: Buffer,
-    fileName: string,
-    mimeType: string,
-  ): Promise<string> {
-    const fullPath = path.join(this.uploadDir, fileName);
-
-    await fs.promises.writeFile(fullPath, fileBuffer);
-
-    return `/uploads/${fileName}`;
+  async remove(p: string) {
+    await fs.rm(this.abs(p), { force: true });
   }
 
-  async delete(filePath: string): Promise<void> {
-    const fullPath = path.join(process.cwd(), filePath);
-    await fs.promises.unlink(fullPath);
+  getPublicUrl(p: string) {
+    // nếu bạn có serve static /storage thì map url ở đây
+    return `/storage/${p}`;
   }
 }

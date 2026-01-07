@@ -15,6 +15,7 @@ import { MfaService } from './infrastructure/services/mfa.service';
 import { UserRepository } from '../user/infrastructure/repositories/user.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthRepository } from './infrastructure/persistence/repositories/auth.repository';
+import { GetMeUseCase } from './application/use-cases/get-me.use-case';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { AuthRepository } from './infrastructure/persistence/repositories/auth.r
     RefreshUseCase,
     EnableMfaUseCase,
     VerifyOtpUseCase,
+    GetMeUseCase,
   ],
   // exports: ['IAuthService', 'IAuthRepository'],
 })

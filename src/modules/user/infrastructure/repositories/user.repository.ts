@@ -97,4 +97,19 @@ export class UserRepository implements IUserRepository {
   async saveSettings(id: string, settings: Record<string, any>) {
     await this.userRepo.update(id, { settings });
   }
+
+  async searchByEmailOrUsername(
+    keyword: string,
+    limit: number,
+  ): Promise<User[]> {
+    const rows = await this.userRepo
+      .createQueryBuilder('u')
+      .where('u.email ILIKE :q', { q: `%${keyword}%` })
+      .orWhere('u.username ILIKE :q', { q: `%${keyword}%` })
+      .orderBy('u.username', 'ASC')
+      .limit(limit)
+      .getMany();
+
+    return rows.map(UserMapper.toDomain);
+  }
 }

@@ -9,4 +9,6 @@ export interface IUserRepository {
   update(user: User): Promise<User>;
   softDelete(id: string): Promise<void>;
   saveSettings(id: string, settings: Record<string, any>): Promise<void>;
+
+  searchByEmailOrUsername(keyword: string, limit: number): Promise<User[]>;
 }

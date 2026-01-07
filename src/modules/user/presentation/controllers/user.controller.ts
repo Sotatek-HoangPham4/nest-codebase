@@ -7,6 +7,8 @@ import {
   Put,
   Patch,
   Query,
+  BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from '../../application/dtos/create-user.dto';
 import { UpdateUserDto } from '../../application/dtos/update-user.dto';
@@ -24,6 +26,34 @@ export class UserController {
     return {
       message: 'Create user successfully',
       data: UserResponseDto.toResponse(user!),
+    };
+  }
+
+  @Get('search')
+  async searchUsers(
+    @Query('email') email: string,
+    @Query('limit') limit?: string,
+  ) {
+    if (!email || email.trim().length < 2) {
+      return {
+        message: 'Search users',
+        data: { items: [] },
+      };
+    }
+
+    const users = await this.userService.searchUsers(
+      email,
+      Number(limit ?? 10),
+    );
+
+    return {
+      message: 'Search users successfully',
+      data: users.map((u) => ({
+        id: u.id,
+        username: u.username,
+        email: u.email.getValue(),
+        fullname: u.fullname,
+      })),
     };
   }
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { FileStorageService } from '../../infrastructure/services/file-storage.service';
 
 @Injectable()
@@ -6,14 +6,18 @@ export class UploadFileUseCase {
   constructor(private readonly storageService: FileStorageService) {}
 
   async execute(file: Express.Multer.File) {
-    const { buffer, originalname, mimetype } = file;
+    if (!file) throw new BadRequestException('file is required');
 
-    const url = await this.storageService.upload(
-      buffer,
-      originalname,
-      mimetype,
-    );
+    const key = `uploads/${Date.now()}_${file.originalname}`;
 
-    return { url };
+    await this.storageService.write(key, file.buffer, file.mimetype);
+
+    return {
+      key,
+      url: this.storageService.publicUrl(key),
+      size: file.size,
+      contentType: file.mimetype,
+      originalName: file.originalname,
+    };
   }
 }

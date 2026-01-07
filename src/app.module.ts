@@ -14,6 +14,9 @@ import { LocalStorageAdapter } from './modules/storage/infrastructure/adapters/l
 import { StorageModule } from './modules/storage/storage.module';
 import { SearchModule } from './modules/search/search.module';
 import { ScheduleModule } from './modules/schedule/schedule.module';
+import { DocumentModule } from './modules/document/document.module';
+import { SignatureModule } from './modules/signature/signature.module';
+import { OrganizationModule } from './modules/organization/organization.module';
 
 @Module({
   imports: [
@@ -33,6 +36,9 @@ import { ScheduleModule } from './modules/schedule/schedule.module';
     StorageModule,
     SearchModule,
     ScheduleModule,
+    DocumentModule,
+    SignatureModule,
+    OrganizationModule,
   ],
   exports: [DatabaseModule],
 })

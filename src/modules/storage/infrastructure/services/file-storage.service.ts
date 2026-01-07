@@ -1,21 +1,32 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
-  type IStorageService,
-  IStorageServiceToken,
+  STORAGE_SERVICE,
+  type StorageServiceInterface,
 } from '../../domain/services/storage.service.interface';
 
 @Injectable()
 export class FileStorageService {
   constructor(
-    @Inject(IStorageServiceToken)
-    private readonly storage: IStorageService,
+    @Inject(STORAGE_SERVICE) private readonly adapter: StorageServiceInterface,
   ) {}
 
-  upload(fileBuffer: Buffer, fileName: string, mimeType: string) {
-    return this.storage.upload(fileBuffer, fileName, mimeType);
+  write(path: string, buffer: Buffer, contentType?: string) {
+    return this.adapter.write(path, buffer, contentType);
   }
 
-  delete(filePath: string) {
-    return this.storage.delete(filePath);
+  read(path: string) {
+    return this.adapter.read(path);
+  }
+
+  exists(path: string) {
+    return this.adapter.exists(path);
+  }
+
+  remove(path: string) {
+    return this.adapter.remove(path);
+  }
+
+  publicUrl(path: string) {
+    return this.adapter.getPublicUrl(path);
   }
 }
